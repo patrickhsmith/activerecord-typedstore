@@ -641,8 +641,8 @@ shared_examples 'a store' do |retain_type=true|
 
     end
 
-    it 'do not respond to <attribute>_before_type_cast' do
-      expect(model).to_not respond_to :nickname_before_type_cast
+    it 'respond to <attribute>_before_type_cast' do
+      expect(model).to respond_to :nickname_before_type_cast
     end
 
   end
