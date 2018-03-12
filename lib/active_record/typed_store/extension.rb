@@ -28,6 +28,14 @@ module ActiveRecord::TypedStore
         end
         store_accessor(store_attribute, dsl.accessors)
 
+        _store_accessors_module.module_eval do
+          dsl.accessors.each do |accessor_name|
+            define_method("#{accessor_name}_before_type_cast") do
+              send(store_attribute).before_type_cast(accessor_name)
+            end
+          end
+        end
+
         dsl.accessors.each do |accessor_name|
           define_method("#{accessor_name}_changed?") do
             send("#{store_attribute}_changed?") &&

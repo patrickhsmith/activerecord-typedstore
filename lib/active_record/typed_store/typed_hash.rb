@@ -17,11 +17,25 @@ module ActiveRecord::TypedStore
 
     def initialize(constructor={})
       super()
+      @untyped = HashWithIndifferentAccess.new
       update(defaults_hash)
       update(constructor.to_h) if constructor.respond_to?(:to_h)
     end
 
+    def dump(obj)
+      super obj.to_hash
+    end
+
+    def load(yaml)
+      self.class.as_indifferent_hash(super(yaml))
+    end
+
+    def before_type_cast(key)
+      @untyped[key]
+    end
+
     def []=(key, value)
+      @untyped[key] = value
       super(key, cast_value(key, value))
     end
     alias_method :store, :[]=
