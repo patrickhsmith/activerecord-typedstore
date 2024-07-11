@@ -19,7 +19,7 @@ module ActiveRecord::TypedStore
         return if @typed_store_attribute_methods_generated
         store_accessors.each do |attribute|
           define_attribute_method(attribute)
-          undefine_before_type_cast_method(attribute)
+          # undefine_before_type_cast_method(attribute)
         end
         @typed_store_attribute_methods_generated = true
       end
@@ -51,6 +51,23 @@ module ActiveRecord::TypedStore
         return public_send(attr_name)
       end
       super
+    end
+
+    def read_attribute_before_type_cast(attr_name)
+      if self.class.store_accessors.include?(attr_name.to_s)
+        return public_send("#{attr_name}_before_type_cast")
+      end
+      super
+    end
+
+    def attributes_before_type_cast
+      before = super
+      self.class.store_accessors.each do |attr|
+        if send("#{attr}_changed?")
+          changes[attr] = [send("#{attr}_was"), send(attr)]
+        end
+      end
+      before
     end
 
     def attribute?(attr_name)

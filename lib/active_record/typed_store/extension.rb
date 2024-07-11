@@ -34,6 +34,15 @@ module ActiveRecord::TypedStore
       store_accessor(store_attribute, dsl.accessors)
 
       dsl.accessors.each do |accessor_name|
+
+        define_method("#{accessor_name}_came_from_user?") do
+          send(store_attribute).came_from_user?(accessor_name)
+        end
+
+        define_method("#{accessor_name}_before_type_cast") do
+          send(store_attribute).before_type_cast(accessor_name)
+        end
+
         define_method("#{accessor_name}_changed?") do
           send("#{store_attribute}_changed?") &&
             send(store_attribute)[accessor_name] != send("#{store_attribute}_was")[accessor_name]

@@ -22,11 +22,13 @@ module ActiveRecord::TypedStore
 
     def initialize(constructor={})
       super()
+      @untyped = HashWithIndifferentAccess.new
       update(defaults_hash)
       update(constructor.to_h) if constructor.respond_to?(:to_h)
     end
 
     def []=(key, value)
+      @untyped[key] = value
       super(key, cast_value(key, value))
     end
     alias_method :store, :[]=
@@ -42,6 +44,14 @@ module ActiveRecord::TypedStore
     end
     alias_method :update, :merge!
 
+    def before_type_cast(key)
+      @untyped[key]
+    end
+
+    def came_from_user?(key)
+      @untyped.key? key
+    end
+    
     private
 
     delegate :fields, :defaults_hash, to: 'self.class'

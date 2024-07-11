@@ -1,3 +1,5 @@
+
+
 # ActiveRecord::TypedStore
 
 [![Build Status](https://secure.travis-ci.org/byroot/activerecord-typedstore.png)](http://travis-ci.org/byroot/activerecord-typedstore)
